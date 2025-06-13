@@ -1013,7 +1013,12 @@ function createConfetti(element) {
     const rect = element.getBoundingClientRect();
     const x = rect.left + rect.width/2;
     const y = rect.top + rect.height/2;
-    for (let i = 0; i < 30; i++) {
+    
+    // 检测是否为移动设备，如果是则减少粒子数量
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const particleCount = isMobile ? 10 : 30; // 移动设备上减少到10个粒子
+    
+    for (let i = 0; i < particleCount; i++) {
         const conf = document.createElement('div');
         conf.className = 'confetti';
         conf.style.backgroundColor = getRandomColor();
@@ -1063,8 +1068,12 @@ function createEmojiConfetti() {
     
     console.log('创建emoji烟花效果');
     
-    // 创建60个emoji元素，增加数量
-    for (let i = 0; i < 60; i++) {
+    // 检测是否为移动设备，如果是则减少emoji数量和动画复杂度
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const emojiCount = isMobile ? 20 : 60; // 移动设备上减少到20个emoji
+    
+    // 创建emoji元素，数量根据设备类型调整
+    for (let i = 0; i < emojiCount; i++) {
         const emoji = document.createElement('div');
         const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
         
@@ -1072,7 +1081,12 @@ function createEmojiConfetti() {
         emoji.innerHTML = randomEmoji;  // 使用innerHTML确保正确渲染emoji
         emoji.style.position = 'absolute';
         emoji.style.zIndex = '9999';
-        emoji.style.fontSize = Math.random() * 30 + 24 + 'px'; // 进一步增大字体，更加明显
+        
+        // 移动设备上使用更小的字体大小
+        emoji.style.fontSize = isMobile ? 
+            (Math.random() * 20 + 16 + 'px') : // 移动设备上更小
+            (Math.random() * 30 + 24 + 'px');  // 桌面设备保持原样
+            
         emoji.style.userSelect = 'none';
         emoji.style.pointerEvents = 'none';
         
@@ -1091,14 +1105,16 @@ function createEmojiConfetti() {
         
         container.appendChild(emoji);
         
-        // 设置动画 - 使用关键帧动画
+        // 设置动画 - 使用关键帧动画，移动设备上缩短动画时间
+        const duration = isMobile ? 2000 + Math.random() * 500 : 3000 + Math.random() * 1000;
+        
         const animation = emoji.animate([
             { transform: 'translate(-50%, -50%) scale(0)', opacity: 0 },
             { transform: 'translate(-50%, -50%) scale(1.5)', opacity: 1, offset: 0.1 },
             { transform: `translate(calc(${endX - startX}px - 50%), calc(${endY - startY}px - 50%)) scale(1) rotate(${Math.random() * 720}deg)`, opacity: 1, offset: 0.4 },
             { transform: `translate(calc(${endX - startX}px - 50%), calc(${endY - startY}px - 50%)) scale(0)`, opacity: 0 }
         ], {
-            duration: 3000 + Math.random() * 1000,
+            duration: duration,
             easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)',
             fill: 'forwards'
         });
@@ -1111,12 +1127,15 @@ function createEmojiConfetti() {
         };
     }
     
-    // 6.5秒后清理容器
+    // 移动设备上缩短清理时间
+    const cleanupTime = isMobile ? 3500 : 6500;
+    
+    // 清理容器
     setTimeout(() => {
         if (container && container.parentNode) {
             container.innerHTML = '';
         }
-    }, 6500);
+    }, cleanupTime);
 }
 
 // 随机猫语
