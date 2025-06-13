@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>猫咪卡片计划工具</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- 移除API配置按钮 -->
+    
+    <div class="app-container">
+        <!-- 页面0：首页 -->
+        <div class="page" id="home-page">
+            <h1 class="page-title">CAT AI PLAN 🐱</h1>
+            <p class="page-subtitle">让 AI 帮你聚焦今天最值得完成的 3 个计划</p>
+            
+            <div class="cat-image-container">
+                <img src="cat-image.jpg" alt="猫咪插画" class="cat-image">
+            </div>
+            
+            <div class="button-container">
+                <button id="start-btn" class="main-btn">开始记录</button>
+                <button id="collection-btn" class="main-btn">我的卡片集</button>
+            </div>
+            
+            <p class="footer-text">本网站由Rico有三猫和AI共同开发</p>
+        </div>
+
+        <!-- 页面一：任务输入页 -->
+        <div class="page" id="input-page" style="display: none;">
+            <h1 class="page-title">你今天有哪些想做的事情？</h1>
+            
+            <div class="voice-hint">
+                <i class="fas fa-microphone"></i> 支持语音输入
+            </div>
+            
+            <div class="input-container">
+                <textarea id="task-input" placeholder="输入你的计划内容，例如：我今天要给客户发送重要邮件、跟朋友吃饭"></textarea>
+                <button id="voice-btn" class="voice-btn">
+                    <i class="fas fa-microphone"></i>
+                </button>
+            </div>
+            
+            <div id="recording-status" class="recording-status">点击麦克风开始录音</div>
+            
+            <div class="button-container">
+                <button id="process-btn" class="main-btn">AI整理</button>
+                <button id="back-to-home-btn" class="secondary-btn">返回</button>
+            </div>
+        </div>
+        
+        <!-- 页面三：任务拆解结果 -->
+        <div class="page" id="task-selection-page" style="display: none;">
+            <h1 class="page-title">选择重要的任务</h1>
+            <p class="page-subtitle">别给自己太多压力，今天做好三件小事就很棒啦</p>
+            
+            <div id="task-cards" class="task-cards-container">
+                <!-- 任务卡片将在这里动态生成 -->
+            </div>
+            
+            <div class="button-container">
+                <button id="ai-select-btn" class="main-btn">AI帮我选</button>
+                <button id="confirm-selection-btn" class="main-btn">确认选择</button>
+                <button id="back-to-input-btn" class="secondary-btn">返回</button>
+            </div>
+        </div>
+
+        <!-- 页面四：选择最重要的一项 + 填写理由 -->
+        <div class="page" id="important-task-page" style="display: none;">
+            <h1 class="page-title">最重要的任务</h1>
+            
+            <div id="selected-tasks" class="selected-tasks-container">
+                <!-- 已选任务将在这里动态生成 -->
+            </div>
+            
+            <div class="reason-container">
+                <h2>为什么这件事对你很重要？</h2>
+                <textarea id="reason-input" placeholder="例如：这件事关系到我的长期目标…"></textarea>
+            </div>
+            
+            <div class="button-container">
+                <button id="complete-btn" class="main-btn">完成</button>
+                <button id="back-to-selection-btn" class="secondary-btn">返回</button>
+            </div>
+        </div>
+
+        <!-- 页面五：卡片展示页 -->
+        <div class="page" id="card-result-page" style="display: none;">
+            <div class="cat-card">
+                <div class="cat-image-container">
+                    <img src="cat-image.jpg" alt="猫咪插画" class="cat-image">
+                </div>
+                
+                <div class="card-date" id="current-date">2025-05-25</div>
+                
+                <div class="card-tasks">
+                    <div id="card-task-list">
+                        <!-- 任务列表将在这里动态生成 -->
+                    </div>
+                </div>
+                
+                <p class="cat-quote" id="cat-quote">喵～今天也要加油喔！</p>
+            </div>
+            
+            <div class="button-container">
+                <button id="view-collection-btn" class="main-btn">查看我的卡片</button>
+                <button id="export-btn" class="main-btn">导出图片</button>
+                <button id="restart-btn" class="secondary-btn">重新开始</button>
+            </div>
+        </div>
+
+        <!-- 页面六：卡片图鉴页面 -->
+        <div class="page" id="collection-page" style="display: none;">
+            <h1 class="page-title">我的卡片集</h1>
+            
+            <div id="card-collection" class="card-collection-container">
+                <!-- 卡片集将在这里动态生成 -->
+            </div>
+            
+            <button id="clear-all-btn" class="danger-btn">清除所有卡片</button>
+            
+            <button id="new-card-btn" class="floating-btn">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+        
+        <!-- 卡片详情弹窗 -->
+        <div id="card-detail-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                
+                <div class="detail-card">
+                    <div class="cat-image-container">
+                        <img src="cat-image.jpg" alt="猫咪插画" class="cat-image">
+                    </div>
+                    
+                    <div class="card-date" id="detail-date">2025-05-25</div>
+                    
+                    <div class="card-tasks">
+                        <div id="detail-task-list">
+                            <!-- 任务列表将在这里动态生成 -->
+                        </div>
+                    </div>
+                    
+                    <p class="cat-quote" id="detail-quote">喵～今天也要加油喔！</p>
+                </div>
+                
+                <div class="button-container">
+                    <button id="detail-export-btn" class="main-btn">导出图片</button>
+                    <button id="detail-delete-btn" class="danger-btn">删除卡片</button>
+                </div>
+            </div>
+            
+            <div id="confetti-container" class="confetti-container"></div>
+        </div>
+    </div>
+
+    <script src="domtoimage.min.js"></script>
+    <script src="api-config.js"></script>
+    <script src="script.js"></script>
+    <script src="simple-fix.js"></script>
+    <script src="api-test-fix.js"></script>
+    <style>
+      /* 移动端语音输入增强 */
+      .mobile-device .voice-hint {
+        padding: 10px;
+        background-color: #f8f8f8;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      
+      .mobile-device .voice-btn {
+        width: 48px;
+        height: 48px;
+        padding: 12px;
+      }
+      
+      .ios-voice-btn {
+        background-color: #ff8eb7 !important;
+        transform: scale(1.1);
+      }
+      
+      .mobile-device .recording-status {
+        padding: 10px;
+        font-weight: bold;
+      }
+      
+      /* 录音时样式 */
+      .recording {
+        animation: pulse 1.5s infinite;
+      }
+      
+      @keyframes pulse {
+        0% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.1); opacity: 0.8; }
+        100% { transform: scale(1); opacity: 1; }
+      }
+    </style>
+</body>
+</html>
